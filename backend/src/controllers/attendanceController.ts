@@ -32,7 +32,7 @@ export const timeIn = async (req: AuthRequest, res: Response) => {
     // Check if already timed in today
     const existingRecord = await prisma.attendanceRecord.findUnique({
       where: {
-        employee_id_date: {
+        employeeId_date: {
           employeeId: employeeId,
           date: today
         }
@@ -46,7 +46,7 @@ export const timeIn = async (req: AuthRequest, res: Response) => {
     // Create or update attendance record
     const attendance = await prisma.attendanceRecord.upsert({
       where: {
-        employee_id_date: {
+        employeeId_date: {
           employeeId: employeeId,
           date: today
         }
@@ -85,7 +85,7 @@ export const timeOut = async (req: AuthRequest, res: Response) => {
     // Find today's record
     const existingRecord = await prisma.attendanceRecord.findUnique({
       where: {
-        employee_id_date: {
+        employeeId_date: {
           employeeId: employeeId,
           date: today
         }
@@ -108,7 +108,7 @@ export const timeOut = async (req: AuthRequest, res: Response) => {
     // Update attendance record
     const updatedAttendance = await prisma.attendanceRecord.update({
       where: {
-        employee_id_date: {
+        employeeId_date: {
           employeeId: employeeId,
           date: today
         }
@@ -144,7 +144,7 @@ export const getTodayAttendance = async (req: AuthRequest, res: Response) => {
 
     const attendance = await prisma.attendanceRecord.findUnique({
       where: {
-        employee_id_date: {
+        employeeId_date: {
           employeeId: employeeId,
           date: today
         }
