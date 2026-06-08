@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  password  String
+  role      String  @default("employee")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  employee Employee?
+
+  @@map("users")
+}
+
+model Employee {
+  id         Int     @id @default(autoincrement())
+  userId     Int     @unique @map("user_id")
+  employeeId String  @unique @map("employee_id")
+  name       String
+  department String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attendanceRecords AttendanceRecord[]
+
+  @@map("employees")
+}
+
+model AttendanceRecord {
+  id          Int      @id @default(autoincrement())
+  employeeId  Int      @map("employee_id")
+  timeIn      DateTime @map("time_in")
+  timeOut     DateTime? @map("time_out")
+  hoursWorked Decimal? @map("hours_worked") @db.Decimal(5, 2)
+  isCompleted Boolean  @default(false) @map("is_completed")
+  date        DateTime @db.Date @map("date")
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, date], name: "employee_id_date")
+  @@index([employeeId, date])
+  @@index([timeIn])
+  @@map("attendance_records")
+}
